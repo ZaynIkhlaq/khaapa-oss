@@ -1,0 +1,44 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "khaapa",
+  "main": "worker/index.ts",
+  "compatibility_date": "2026-09-01",
+  "compatibility_flags": ["nodejs_compat"],
+  // "account_id": "<your Cloudflare account id>",  (or set CLOUDFLARE_ACCOUNT_ID)
+  "workers_dev": true,
+  // Pull payment emails from the connected inbox every minute.
+  "triggers": { "crons": ["* * * * *"] },
+  // Your own domain (must be a zone on your Cloudflare account). Remove this line to use *.workers.dev only.
+  // "routes": [{ "pattern": "shop.example.com", "custom_domain": true }],
+  "observability": { "enabled": true },
+  "assets": {
+    "directory": "./dist/client",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": ["/api/*", "/mcp", "/oauth/*", "/.well-known/*"]
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "khaapa",
+      "database_id": "<run: npx wrangler d1 create khaapa>",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "r2_buckets": [{ "binding": "IMAGES", "bucket_name": "khaapa-images" }],
+  // Per-IP limit on the public endpoints (pre-orders, payment screenshots, sign-in, MCP registration/token).
+  "ratelimits": [{ "name": "PUBLIC_LIMIT", "namespace_id": "1001", "simple": { "limit": 30, "period": 60 } }],
+  "vars": {
+    // Google OAuth client (public). The secret is a Worker secret: `wrangler secret put GOOGLE_CLIENT_SECRET`
+    // (and GOOGLE_CLIENT_SECRET=... in the gitignored .dev.vars for local dev).
+    "GOOGLE_CLIENT_ID": "<your-client-id>.apps.googleusercontent.com",
+    // Only Google accounts on this domain may sign in.
+    "ALLOWED_EMAIL_DOMAIN": "example.edu",
+    // The one account that is always admin and can never be demoted or disabled.
+    "OWNER_EMAIL": "you@example.edu",
+    // Gmail search that selects payment notification emails in the connected inbox.
+    "PAYMENT_EMAIL_QUERY": "from:nayapay",
+    // Your custom domain, if any: sign-ins started on *.workers.dev are sent there (Google only allows one redirect host).
+    "CANONICAL_HOST": ""
+  }
+}

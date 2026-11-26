@@ -1,0 +1,63 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  /* Palette comes from the logo: purple lettering on an orange stamp. Purple carries the UI;
+     orange stays small so the screens read calm. Greys are tinted toward the purple. */
+  --color-ink: #231533;
+  --color-paper: #ffffff;
+  --color-accent: #5c2f80;
+  --color-accent-soft: #f3ecf7;
+  --color-brand: #ee3d07;
+  /* Soft brand orange for small counters (cart badges): pale fill, deep orange text, hairline edge. */
+  --color-brand-soft: #fff1eb;
+  --color-brand-ink: #c2370a;
+  --color-brand-edge: #fbd3c3;
+  --color-line: #e9e4ee;
+  --color-neutral-50: #faf8fb;
+  --color-neutral-100: #f4f1f6;
+  --color-neutral-200: #e8e3ec;
+  --color-neutral-300: #d5cedb;
+  --color-neutral-400: #a59dae;
+  --color-neutral-500: #776e82;
+  --color-neutral-600: #574e63;
+  --color-neutral-700: #42394e;
+  --color-neutral-800: #2f2640;
+  --color-neutral-900: #1f1730;
+}
+
+html { -webkit-text-size-adjust: 100%; }
+body {
+  @apply bg-paper text-ink font-sans antialiased;
+  font-feature-settings: "cv11", "ss01", "ss03";
+  letter-spacing: -0.006em;
+}
+h1, h2, h3 { letter-spacing: -0.02em; }
+.tabular { font-variant-numeric: tabular-nums; }
+
+* { scrollbar-width: thin; scrollbar-color: #d5cedb transparent; }
+::selection { background: #e3c1d3; }
+
+@keyframes rise { from { opacity: 0; transform: translateY(4px) } to { opacity: 1; transform: none } }
+.rise { animation: rise .18s ease-out both; }
+
+/* Cart count badge: a quick, soft pop each time the number changes (keyed on the count). */
+@keyframes pop { 0% { transform: scale(.7); opacity: .4 } 60% { transform: scale(1.08); opacity: 1 } 100% { transform: scale(1) } }
+.pop { animation: pop .22s cubic-bezier(.2,.8,.3,1) both; }
+@media (prefers-reduced-motion: reduce) { .pop { animation: none; } }
+
+@keyframes slide-in { from { transform: translateX(-100%) } to { transform: none } }
+.slide-in { animation: slide-in .18s ease-out both; }
+
+/* Landing page: slow drifting brand glows behind the hero, and a gently floating logo. */
+@keyframes drift-a { 0%,100% { transform: translate(0,0) scale(1) } 50% { transform: translate(8%, 6%) scale(1.12) } }
+@keyframes drift-b { 0%,100% { transform: translate(0,0) scale(1.05) } 50% { transform: translate(-10%, -4%) scale(.95) } }
+@keyframes drift-c { 0%,100% { transform: translate(0,0) scale(1) } 50% { transform: translate(-4%, 8%) scale(1.15) } }
+@keyframes float { 0%,100% { transform: translateY(0) rotate(-1.5deg) } 50% { transform: translateY(-10px) rotate(1.5deg) } }
+.glow { position: absolute; border-radius: 9999px; filter: blur(72px); opacity: .45; will-change: transform; }
+.glow-a { animation: drift-a 18s ease-in-out infinite; }
+.glow-b { animation: drift-b 22s ease-in-out infinite; }
+.glow-c { animation: drift-c 26s ease-in-out infinite; }
+.float { animation: float 7s ease-in-out infinite; }
+.dot-grid { background-image: radial-gradient(rgb(35 21 51 / .08) 1px, transparent 1px); background-size: 22px 22px; }
+@media (prefers-reduced-motion: reduce) { .glow-a, .glow-b, .glow-c, .float { animation: none; } }
